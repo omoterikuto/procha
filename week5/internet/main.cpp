@@ -1,42 +1,36 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <queue>
 
 using namespace std;
+int n, m;
+map<int, bool> checked;
+
+void check(int target, vector<vector<int> > mx) {
+    checked[target] = true;
+    for (int i = 1; i <= n; ++i) {
+        if (mx[target][i] == 1 && !checked[i]) {
+            check(i, mx);
+        }
+    }
+}
 
 int main() {
-    int n, m;
     cin >> n >> m;
 
-    vector<vector<int> > connect(n + 1, vector<int>());
+    vector<vector<int> > mx(n + 1, vector<int>(n + 1));
     for (int i = 0; i < m; ++i) {
         int a, b;
         cin >> a >> b;
-        connect[a].push_back(b);
-        connect[b].push_back(a);
+        mx[a][b] = 1;
+        mx[b][a] = 1;
     }
 
-    queue<int> q;
-    map<int, bool> check;
-    check[1] = true;
-    q.push(1);
+    check(1, mx);
 
-    while (!q.empty()) {
-        int target = q.front();
-        q.pop();
-
-        for (auto i: connect[target]) {
-            if (!check[i]) {
-                check[i] = true;
-                q.push(i);
-            }
-        }
-    }
-
-    bool notAll = false;
+    bool notAll;
     for (int i = 1; i <= n; ++i) {
-        if (!check[i]) {
+        if (!checked[i]) {
             notAll = true;
             cout << i << endl;
         }
@@ -44,4 +38,4 @@ int main() {
     if (!notAll) {
         cout << "Connected" << endl;
     }
-};
+}
